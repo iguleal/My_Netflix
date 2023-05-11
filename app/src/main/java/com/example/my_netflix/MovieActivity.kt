@@ -24,21 +24,9 @@ class MovieActivity : AppCompatActivity() {
         binding.txtMovieDesc.text = "Essa é a descrição do filme do Batman"
         binding.txtMovieCast.text = getString(R.string.cast,"Ator A, Ator B, Atriz C")
 
-        val toolbar: Toolbar = findViewById(R.id.movie_toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = null
+        actionBar()
 
-        val layerDrawable: LayerDrawable =
-            ContextCompat.getDrawable(this, R.drawable.shadow) as LayerDrawable
-
-        val movieCover = ContextCompat.getDrawable(this, R.drawable.movie_4)
-
-        layerDrawable.setDrawableByLayerId(R.id.cover_drawable, movieCover)
-
-        val img : ImageView = findViewById(R.id.img_movie)
-        img.setImageDrawable(layerDrawable)
+        setMovieImage()
 
         val rvSimilar :RecyclerView = findViewById(R.id.rv_similar)
         rvSimilar.layoutManager = GridLayoutManager(this, 3)
@@ -50,5 +38,25 @@ class MovieActivity : AppCompatActivity() {
         }
 
         rvSimilar.adapter = MovieAdapter(movieList, R.layout.movie_item_similar)
+    }
+
+    private fun actionBar(){
+        val toolbar: Toolbar = findViewById(R.id.movie_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = null
+    }
+
+    private fun setMovieImage(){
+        val layerDrawable: LayerDrawable =
+            ContextCompat.getDrawable(this, R.drawable.shadow) as LayerDrawable
+
+        val movieCover = ContextCompat.getDrawable(this, R.drawable.movie_4)
+
+        layerDrawable.setDrawableByLayerId(R.id.cover_drawable, movieCover)
+
+        val img : ImageView = findViewById(R.id.img_movie)
+        img.setImageDrawable(layerDrawable)
     }
 }
