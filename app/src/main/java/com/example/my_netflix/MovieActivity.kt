@@ -32,10 +32,6 @@ class MovieActivity : AppCompatActivity() {
         rvSimilar.layoutManager = GridLayoutManager(this, 3)
 
         val movieList = mutableListOf<Movie>()
-        for (i in 0 until 15) {
-            val movie = Movie(R.drawable.movie_4)
-            movieList.add((movie))
-        }
 
         rvSimilar.adapter = MovieAdapter(movieList, R.layout.movie_item_similar)
     }

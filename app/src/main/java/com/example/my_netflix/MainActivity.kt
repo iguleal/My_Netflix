@@ -17,15 +17,8 @@ class MainActivity : AppCompatActivity() {
 
         val categoryList = mutableListOf<Category>()
 
-        for (j in 0 until 5) {
-            val movieList = mutableListOf<Movie>()
-            for (i in 0 until 10) {
-                val movie = Movie(R.drawable.movie_4)
-                movieList.add((movie))
-            }
-            val category = Category("category: $j", movieList)
-            categoryList.add(category)
-        }
         rvMain.adapter = CategoryAdapter(categoryList)
+
+        CategoryTask().execute("https://api.tiagoaguiar.co/netflixapp/home?apiKey=20e64b98-2643-4bac-8224-401f0e29a83e")
     }
 }
