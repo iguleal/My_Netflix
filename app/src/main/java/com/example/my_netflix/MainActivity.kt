@@ -11,7 +11,9 @@ import com.example.my_netflix.model.Category
 
 class MainActivity : AppCompatActivity(), CategoryTask.Callback {
 
-    lateinit var progressBar: ProgressBar
+    private lateinit var progressBar: ProgressBar
+    private val categoryList = mutableListOf<Category>()
+    private lateinit var adapter : CategoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,15 +23,16 @@ class MainActivity : AppCompatActivity(), CategoryTask.Callback {
 
         val rvMain: RecyclerView = findViewById(R.id.rv_main)
         rvMain.layoutManager = LinearLayoutManager(this)
-
-        val categoryList = mutableListOf<Category>()
-
-        rvMain.adapter = CategoryAdapter(categoryList)
+        adapter = CategoryAdapter(categoryList)
+        rvMain.adapter = adapter
 
         CategoryTask(this).execute("https://api.tiagoaguiar.co/netflixapp/home?apiKey=20e64b98-2643-4bac-8224-401f0e29a83e")
     }
 
     override fun onResult(categories: List<Category>) {
+        categoryList.clear()
+        categoryList.addAll(categories)
+        adapter.notifyDataSetChanged()
         progressBar.visibility = View.GONE
     }
 
