@@ -2,15 +2,22 @@ package com.example.my_netflix
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.my_netflix.model.Category
-import com.example.my_netflix.model.Movie
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CategoryTask.Callback {
+
+    lateinit var progressBar: ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        progressBar = findViewById(R.id.progressBar)
 
         val rvMain: RecyclerView = findViewById(R.id.rv_main)
         rvMain.layoutManager = LinearLayoutManager(this)
@@ -19,6 +26,19 @@ class MainActivity : AppCompatActivity() {
 
         rvMain.adapter = CategoryAdapter(categoryList)
 
-        CategoryTask().execute("https://api.tiagoaguiar.co/netflixapp/home?apiKey=20e64b98-2643-4bac-8224-401f0e29a83e")
+        CategoryTask(this).execute("https://api.tiagoaguiar.co/netflixapp/home?apiKey=20e64b98-2643-4bac-8224-401f0e29a83e")
+    }
+
+    override fun onResult(categories: List<Category>) {
+        progressBar.visibility = View.GONE
+    }
+
+    override fun onFailure(message: String) {
+        Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+        progressBar.visibility = View.GONE
+    }
+
+    override fun preExecute() {
+        progressBar.visibility = View.VISIBLE
     }
 }

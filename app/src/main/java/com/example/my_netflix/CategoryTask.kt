@@ -1,5 +1,7 @@
 package com.example.my_netflix
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import com.example.my_netflix.model.Category
 import com.example.my_netflix.model.Movie
@@ -10,9 +12,19 @@ import java.net.URL
 import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
 
-class CategoryTask {
+class CategoryTask (val callback: Callback){
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    interface Callback {
+        fun onResult(categories: List<Category>)
+        fun onFailure(message: String)
+        fun preExecute()
+    }
 
     fun execute(url: String) {
+
+        callback.preExecute()
         val executor = Executors.newSingleThreadExecutor()
 
         executor.execute {
@@ -33,11 +45,19 @@ class CategoryTask {
                 stream = urlConnection.inputStream
                 val jsonAsString = stream.bufferedReader().use { it.readText() }
 
-                toCategories(jsonAsString)
+                val categories = toCategories(jsonAsString)
 
+                handler.post {
+                    callback.onResult(categories)
+                }
 
             } catch (e: IOException) {
-                Log.e("teste", e.message ?: "erro desconhecido", e)
+                val message = e.message ?: "erro desconhecido"
+                Log.e("teste", message, e)
+
+                handler.post {
+                    callback.onFailure(message)
+                }
             } finally {
                 urlConnection?.disconnect()
                 stream?.close()
@@ -46,18 +66,21 @@ class CategoryTask {
     }
 
     private fun toCategories(jsonAsString: String): List<Category> {
+
         val categories = mutableListOf<Category>()
 
         val jsonRoot = JSONObject(jsonAsString)
         val jsonCategories = jsonRoot.getJSONArray("category")
-        for (i in 0 until jsonCategories.length()) {
-            val jsonCategory = jsonCategories.getJSONObject(i)
 
+        for (i in 0 until jsonCategories.length()) {
+
+            val jsonCategory = jsonCategories.getJSONObject(i)
             val title = jsonCategory.getString("title")
             val jsonMovies = jsonCategory.getJSONArray("movie")
 
             val movies = mutableListOf<Movie>()
             for (j in 0 until jsonMovies.length()) {
+
                 val jsonMovie = jsonMovies.getJSONObject(j)
                 val id = jsonMovie.getInt("id")
                 val coverUrl = jsonMovie.getString("cover_url")
