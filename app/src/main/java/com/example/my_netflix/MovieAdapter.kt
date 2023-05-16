@@ -8,6 +8,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import com.example.my_netflix.model.Movie
+import com.squareup.picasso.Picasso
 
 class MovieAdapter(
     private val movieList: MutableList<Movie>,
@@ -34,8 +35,7 @@ class MovieAdapter(
 
         fun bind(movie: Movie) {
             val imgMovie: ImageView = itemView.findViewById(R.id.img_movie)
-
-//            imgMovie.setImageResource(movie.coverUrl)
+            Picasso.get().load(movie.coverUrl).into(imgMovie)
         }
     }
 }
