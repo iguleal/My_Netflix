@@ -12,7 +12,8 @@ import com.squareup.picasso.Picasso
 
 class MovieAdapter(
     private val movieList: MutableList<Movie>,
-    @LayoutRes val layoutId: Int) :
+    @LayoutRes val layoutId: Int,
+    val onItemClickListener: ((Int) -> Unit)? = null) :
     RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):
@@ -36,6 +37,10 @@ class MovieAdapter(
         fun bind(movie: Movie) {
             val imgMovie: ImageView = itemView.findViewById(R.id.img_movie)
             Picasso.get().load(movie.coverUrl).into(imgMovie)
+
+            imgMovie.setOnClickListener {
+                onItemClickListener?.invoke(movie.id)
+            }
         }
     }
 }
