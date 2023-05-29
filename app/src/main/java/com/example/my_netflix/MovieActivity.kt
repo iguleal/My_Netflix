@@ -1,21 +1,26 @@
 package com.example.my_netflix
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
-import android.widget.ImageView
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.my_netflix.databinding.ActivityMovieBinding
-import com.example.my_netflix.model.Movie
+import com.example.my_netflix.model.MovieDetail
+import com.squareup.picasso.Picasso
 import java.io.IOException
 
-class MovieActivity : AppCompatActivity() {
+class MovieActivity : AppCompatActivity(), MovieTask.Callback {
 
-    lateinit var binding: ActivityMovieBinding
+    private lateinit var binding: ActivityMovieBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,20 +29,34 @@ class MovieActivity : AppCompatActivity() {
 
         val id = intent?.extras?.getInt("id") ?: throw IOException("erro")
 
-        binding.txtTittle.text = "Batman Begins"
-        binding.txtMovieDesc.text = "Essa é a descrição do filme do Batman"
-        binding.txtMovieCast.text = getString(R.string.cast,"Ator A, Ator B, Atriz C")
+        val url =
+            "https://api.tiagoaguiar.co/netflixapp/movie/$id?apiKey=20e64b98-2643-4bac-8224-401f0e29a83e"
+        MovieTask(this).execute(url)
 
         actionBar()
+    }
 
-        setMovieImage()
+    override fun onResult(movieDetail: MovieDetail) {
 
-        val rvSimilar :RecyclerView = findViewById(R.id.rv_similar)
-        rvSimilar.layoutManager = GridLayoutManager(this, 3)
+        setMovieImage(movieDetail.movie.coverUrl)
+        binding.txtTittle.text = movieDetail.movie.title
+        binding.txtMovieDesc.text = movieDetail.movie.desc
+        binding.txtMovieCast.text = getString(R.string.cast, movieDetail.movie.cast)
 
-        val movieList = mutableListOf<Movie>()
+        val movieList = movieDetail.similar
+        binding.rvSimilar.layoutManager = GridLayoutManager(this, 3)
+        binding.rvSimilar.adapter = MovieAdapter(movieList, R.layout.movie_item_similar)
 
-        rvSimilar.adapter = MovieAdapter(movieList, R.layout.movie_item_similar)
+        binding.progressBar.visibility = View.GONE
+    }
+
+    override fun onFailure(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        binding.progressBar.visibility = View.GONE
+    }
+
+    override fun preExecute() {
+        binding.progressBar.visibility = View.VISIBLE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -47,7 +66,7 @@ class MovieActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun actionBar(){
+    private fun actionBar() {
         val toolbar: Toolbar = findViewById(R.id.movie_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_back_arrow)
@@ -55,15 +74,29 @@ class MovieActivity : AppCompatActivity() {
         supportActionBar?.title = null
     }
 
-    private fun setMovieImage(){
-        val layerDrawable: LayerDrawable =
-            ContextCompat.getDrawable(this, R.drawable.shadow) as LayerDrawable
+    private fun setMovieImage(coverUrl: String) {
 
-        val movieCover = ContextCompat.getDrawable(this, R.drawable.movie_4)
+        Picasso.get().load(coverUrl).into(object : com.squareup.picasso.Target {
 
-        layerDrawable.setDrawableByLayerId(R.id.cover_drawable, movieCover)
+            override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
 
-        val img : ImageView = findViewById(R.id.img_movie)
-        img.setImageDrawable(layerDrawable)
+                val errorMessage: String = "Não foi possível carregar a imagem do filme!"
+                Toast.makeText(this@MovieActivity, errorMessage, Toast.LENGTH_LONG).show()
+            }
+
+            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+            }
+
+            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                val layerDrawable: LayerDrawable = ContextCompat.getDrawable(
+                    this@MovieActivity,
+                    R.drawable.shadow
+                ) as LayerDrawable
+                val movieCover = BitmapDrawable(resources, bitmap)
+                layerDrawable.setDrawableByLayerId(R.id.cover_drawable, movieCover)
+
+                binding.imgMovie.setImageDrawable(layerDrawable)
+            }
+        })
     }
 }

@@ -11,7 +11,7 @@ import com.example.my_netflix.model.Movie
 import com.squareup.picasso.Picasso
 
 class MovieAdapter(
-    private val movieList: MutableList<Movie>,
+    private val movieList: List<Movie>,
     @LayoutRes val layoutId: Int,
     val onItemClickListener: ((Int) -> Unit)? = null) :
     RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {

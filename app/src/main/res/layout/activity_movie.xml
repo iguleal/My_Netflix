@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
-            android:text="Titulo do Filme"
+            tools:text="Titulo do Filme"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -60,7 +60,7 @@
             android:ellipsize="end"
             android:lineSpacingExtra="3sp"
             android:maxLines="3"
-            android:text="descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição "
+            tools:text="descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição descrição "
             android:textColor="@color/light_grey"
             app:layout_constraintTop_toBottomOf="@+id/img_movie" />
 
@@ -68,15 +68,14 @@
             android:id="@+id/txt_movie_cast"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="48dp"
             android:ellipsize="end"
             android:lineSpacingExtra="3sp"
             android:maxLines="3"
-            android:text="elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco"
+            tools:text="elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco elenco"
             android:textColor="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@+id/txt_movie_desc" />
+            app:layout_constraintTop_toBottomOf="@+id/txt_movie_desc"
+            tools:layout_editor_absoluteX="16dp" />
 
         <TextView
             android:id="@+id/txt_similar"
@@ -85,7 +84,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:text="@string/txt_similar"
+            tools:text="@string/txt_similar"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="14sp"
@@ -102,6 +101,14 @@
             app:layout_constraintTop_toBottomOf="@+id/txt_similar"
             tools:listitem="@layout/movie_item_similar" />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/txt_similar"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
